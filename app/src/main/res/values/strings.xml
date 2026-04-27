@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">CalMind</string>
+
+    <string name="default_web_client_id">
+        1234567890-xxxxxxxxxxxxxxxxxxxxxxxx.apps.googleusercontent.com
+    </string>
+</resources>
