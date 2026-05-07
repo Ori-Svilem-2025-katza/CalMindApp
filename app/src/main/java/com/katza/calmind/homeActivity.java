@@ -1,26 +1,38 @@
 package com.katza.calmind;
 
-import android.Manifest;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.os.Bundle;
-import android.widget.*;
+import android.util.Log;
+import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.work.PeriodicWorkRequest;
-import androidx.work.WorkManager;
-import com.google.android.gms.auth.api.signin.*;
+
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.Scope;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.*;
-import java.util.*;
-import java.util.concurrent.TimeUnit;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+import java.util.Locale;
 
 public class homeActivity extends AppCompatActivity {
 
@@ -29,6 +41,8 @@ public class homeActivity extends AppCompatActivity {
     private TextView tvName, tvMonthYear;
     private Calendar selectedDate;
     private List<EventModel> masterEventsList = new ArrayList<>();
+    private Button btnSmartMeeting, btnRequests; // כפתורים חדשים
+
     private static final int RC_SIGN_IN = 9001;
     private static final String WEB_CLIENT_ID = "1004619012790-v195f7fi1j7ejri8gu2egu6c2sdmtr0f.apps.googleusercontent.com";
 
@@ -37,25 +51,26 @@ public class homeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 100);
-        }
-
         auth = FirebaseAuth.getInstance();
         tvName = findViewById(R.id.tvName);
         tvMonthYear = findViewById(R.id.tvMonthYear);
         calendarRecyclerView = findViewById(R.id.calendarRecyclerView);
         rvEvents = findViewById(R.id.rvEvents);
 
+        // אתחול כפתורים
         Button btnAdd = findViewById(R.id.btnAdd);
         Button btnLogout = findViewById(R.id.btnLogout);
         Button btnSync = findViewById(R.id.btnSync);
         Button btnPrev = findViewById(R.id.btnPrev);
         Button btnNext = findViewById(R.id.btnNext);
+        btnSmartMeeting = findViewById(R.id.btnSmartMeeting);
+        btnRequests = findViewById(R.id.btnRequests);
 
-        selectedDate = Calendar.getInstance();
+        // הגדרת רשימות (RecyclerView)
         calendarRecyclerView.setLayoutManager(new GridLayoutManager(this, 7));
         rvEvents.setLayoutManager(new LinearLayoutManager(this));
+
+        selectedDate = Calendar.getInstance();
 
         if (auth.getCurrentUser() != null) {
             String email = auth.getCurrentUser().getEmail();
@@ -64,6 +79,7 @@ public class homeActivity extends AppCompatActivity {
 
         loadAllEventsFromFirebase();
 
+        // מאזינים לכפתורים
         btnPrev.setOnClickListener(v -> {
             selectedDate.add(Calendar.MONTH, -1);
             setMonthView();
@@ -75,6 +91,7 @@ public class homeActivity extends AppCompatActivity {
         });
 
         btnAdd.setOnClickListener(v -> startActivity(new Intent(this, AddEventActivity.class)));
+
         btnLogout.setOnClickListener(v -> {
             auth.signOut();
             GoogleSignIn.getClient(this, GoogleSignInOptions.DEFAULT_SIGN_IN).signOut().addOnCompleteListener(task -> {
@@ -82,11 +99,19 @@ public class homeActivity extends AppCompatActivity {
                 finish();
             });
         });
+
         btnSync.setOnClickListener(v -> signInAndSync());
 
-        PeriodicWorkRequest reminderRequest = new PeriodicWorkRequest.Builder(
-                SmartReminderWorker.class, 1, TimeUnit.HOURS).build();
-        WorkManager.getInstance(this).enqueue(reminderRequest);
+        // קישור למסכים החדשים
+        btnSmartMeeting.setOnClickListener(v -> {
+            Intent intent = new Intent(homeActivity.this, SmartMeetingActivity.class);
+            startActivity(intent);
+        });
+
+        btnRequests.setOnClickListener(v -> {
+            Intent intent = new Intent(homeActivity.this, PendingRequestsActivity.class);
+            startActivity(intent);
+        });
     }
 
     private void loadAllEventsFromFirebase() {
@@ -105,14 +130,15 @@ public class homeActivity extends AppCompatActivity {
                         setMonthView();
                     }
                     @Override
-                    public void onCancelled(@NonNull DatabaseError error) {}
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Log.e("Firebase", "Load failed", error.toException());
+                    }
                 });
     }
 
     private void setMonthView() {
         tvMonthYear.setText(monthYearFromDate(selectedDate));
         ArrayList<String> daysInMonth = daysInMonthArray(selectedDate);
-
         String month = String.valueOf(selectedDate.get(Calendar.MONTH) + 1);
         String year = String.valueOf(selectedDate.get(Calendar.YEAR));
         String monthYearKey = month + "-" + year;
@@ -168,29 +194,45 @@ public class homeActivity extends AppCompatActivity {
         startActivityForResult(client.getSignInIntent(), RC_SIGN_IN);
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == RC_SIGN_IN) {
+            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+            try {
+                GoogleSignInAccount account = task.getResult(ApiException.class);
+                if (account != null) {
+                    syncWithGoogleCalendar(account.getEmail());
+                }
+            } catch (ApiException e) {
+                Log.e("CalMind_Debug", "Google sign in failed", e);
+            }
+        }
+    }
+
+    private void syncWithGoogleCalendar(String email) {
+        GoogleCalendarHelper.fetchEvents(this, email, new GoogleCalendarHelper.CalendarCallback() {
+            @Override
+            public void onSuccess(List<EventModel> events) {
+                String uid = auth.getUid();
+                if (uid == null) return;
+                DatabaseReference ref = FirebaseDatabase.getInstance().getReference("users").child(uid).child("events");
+                for (EventModel e : events) {
+                    if (e.getId() != null) ref.child(e.getId()).setValue(e);
+                }
+                runOnUiThread(() -> Toast.makeText(homeActivity.this, "הסנכרון הושלם!", Toast.LENGTH_SHORT).show());
+            }
+            @Override
+            public void onError(Exception e) { Log.e("CalMind", "Sync error", e); }
+        });
+    }
+
     private void showEventDetails(EventModel event) {
         if (event == null) return;
-
-        String title = (event.getTitle() != null) ? event.getTitle() : "אירוע ללא שם";
-        String location = (event.getLocationName() != null && !event.getLocationName().isEmpty()) ? event.getLocationName() : "לא צוין";
-
         new AlertDialog.Builder(this)
-                .setTitle(title)
-                .setMessage("⏰ שעה: " + event.getTime() + "\n📍 מיקום: " + location)
+                .setTitle(event.getTitle())
+                .setMessage("⏰ שעה: " + event.getTime() + "\n📍 מיקום: " + event.getLocationName())
                 .setPositiveButton("סגור", null)
-                .setNeutralButton("ניווט", (dialog, which) -> {
-                    if (!location.equals("לא צוין")) {
-                        // פורמט ניווט ישיר שעובד הכי טוב עם גוגל מפות
-                        Uri gmmIntentUri = Uri.parse("google.navigation:q=" + Uri.encode(location));
-                        Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
-                        mapIntent.setPackage("com.google.android.apps.maps");
-
-                        try {
-                            startActivity(mapIntent);
-                        } catch (Exception e) {
-                            Toast.makeText(this, "גוגל מפות לא מותקנת", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                }).show();
+                .show();
     }
 }

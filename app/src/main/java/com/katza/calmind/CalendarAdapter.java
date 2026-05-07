@@ -18,7 +18,7 @@ import java.util.Locale;
 
 public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.CalendarViewHolder> {
     private final ArrayList<String> daysOfMonth;
-    private final String currentMonthYear;
+    private final String currentMonthYear; // פורמט צפוי: "M-yyyy"
     private final List<EventModel> allEvents;
     private final OnItemListener onItemListener;
 
@@ -47,13 +47,27 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
         holder.eventContainer.removeAllViews();
 
         if (day != null && !day.isEmpty()) {
-            String dateKey = day + "-" + currentMonthYear;
+            // תיקון פורמט התאריך להתאמה ל-Google ול-Firebase (למשל: 07-05-2026)
+            String dateKey = formatToStandardDate(day, currentMonthYear);
+
             for (EventModel event : allEvents) {
                 if (event.getDateKey() != null && event.getDateKey().equals(dateKey)) {
                     addMiniEvent(holder, event);
                 }
             }
             holder.itemView.setOnClickListener(v -> onItemListener.onItemClick(dateKey));
+        }
+    }
+
+    private String formatToStandardDate(String day, String monthYear) {
+        try {
+            String[] parts = monthYear.split("-");
+            int dayInt = Integer.parseInt(day);
+            int monthInt = Integer.parseInt(parts[0]);
+            int yearInt = Integer.parseInt(parts[1]);
+            return String.format(Locale.getDefault(), "%02d-%02d-%04d", dayInt, monthInt, yearInt);
+        } catch (Exception e) {
+            return day + "-" + monthYear; // Fallback
         }
     }
 
@@ -80,33 +94,18 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
 
     private int getEventStatusColor(EventModel event) {
         try {
-            // שימוש בפורמט גמיש שמטפל גם ב-1-5-2026 וגם ב-01-05-2026
-            SimpleDateFormat sdf = new SimpleDateFormat("d-M-yyyy HH:mm", Locale.getDefault());
+            SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm", Locale.getDefault());
             Date now = new Date();
+            Date start = sdf.parse(event.getDateKey() + " " + event.getTime());
 
-            String startTimeStr = event.getDateKey() + " " + event.getTime();
-            Date start = sdf.parse(startTimeStr);
-
-            Date end = null;
             if (event.getEndTime() != null && !event.getEndTime().isEmpty()) {
-                String endTimeStr = event.getDateKey() + " " + event.getEndTime();
-                end = sdf.parse(endTimeStr);
+                Date end = sdf.parse(event.getDateKey() + " " + event.getEndTime());
+                if (now.after(start) && now.before(end)) return Color.parseColor("#6200EE");
             }
 
-            // בדיקה: האם אנחנו בתוך טווח הזמן? (סגול)
-            if (end != null && now.getTime() >= start.getTime() && now.getTime() <= end.getTime()) {
-                return Color.parseColor("#6200EE");
-            }
-            // בדיקה: האם האירוע עוד לא התחיל? (ירוק)
-            else if (now.before(start)) {
-                return Color.parseColor("#4CAF50");
-            }
-            // כל השאר (עבר) - אפור
-            else {
-                return Color.parseColor("#9E9E9E");
-            }
+            if (now.before(start)) return Color.parseColor("#4CAF50");
+            return Color.parseColor("#9E9E9E");
         } catch (Exception e) {
-            Log.e("CalendarColor", "Error parsing date: " + e.getMessage());
             return Color.parseColor("#9E9E9E");
         }
     }

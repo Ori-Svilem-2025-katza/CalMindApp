@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "1004619012790",
+    "firebase_url": "https://calmind-1bc83-default-rtdb.firebaseio.com",
     "project_id": "calmind-1bc83",
     "storage_bucket": "calmind-1bc83.firebasestorage.app"
   },
@@ -12,7 +13,16 @@
           "package_name": "com.katza.calmind"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "1004619012790-4kmu760thc75svhrq5cbohcbclu7o3mt.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.katza.calmind",
+            "certificate_hash": "191f9552a2ba5144d18929f529289cdca1e642c9"
+          }
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyAWoiijBiRslfR8HWO_nQE2SKny9n6noy0"
@@ -20,7 +30,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1004619012790-v195f7fi1j7ejri8gu2egu6c2sdmtr0f.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

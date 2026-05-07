@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class loginActivity extends AppCompatActivity {
 
@@ -23,19 +24,14 @@ public class loginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login_activity);
 
-        // אתחול Firebase Auth
         auth = FirebaseAuth.getInstance();
 
-        // קישור רכיבי ה-UI (תוודא שה-IDs האלו קיימים ב-XML שלך)
         etEmail = findViewById(R.id.etEmail);
         etPassword = findViewById(R.id.etPassword);
         btnLogin = findViewById(R.id.btnLogin);
         btnRegister = findViewById(R.id.btnRegister);
 
-        // כפתור התחברות
         btnLogin.setOnClickListener(v -> loginUser());
-
-        // כפתור הרשמה (למשתמש חדש)
         btnRegister.setOnClickListener(v -> registerUser());
     }
 
@@ -51,6 +47,7 @@ public class loginActivity extends AppCompatActivity {
         auth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
+                        updateUsersLookup();
                         goToHome();
                     } else {
                         Log.e("AuthError", "Login failed", task.getException());
@@ -71,6 +68,7 @@ public class loginActivity extends AppCompatActivity {
         auth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
+                        updateUsersLookup();
                         Toast.makeText(this, "נרשמת בהצלחה!", Toast.LENGTH_SHORT).show();
                         goToHome();
                     } else {
@@ -78,6 +76,17 @@ public class loginActivity extends AppCompatActivity {
                         Toast.makeText(this, "הרשמה נכשלה", Toast.LENGTH_SHORT).show();
                     }
                 });
+    }
+
+    private void updateUsersLookup() {
+        FirebaseUser user = auth.getCurrentUser();
+        if (user != null && user.getEmail() != null) {
+            String uid = user.getUid();
+            String safeEmail = user.getEmail().replace(".", ",");
+            // שמירת המיפוי בין אימייל ל-UID ב-Database
+            FirebaseDatabase.getInstance().getReference("users_lookup")
+                    .child(safeEmail).setValue(uid);
+        }
     }
 
     private void goToHome() {

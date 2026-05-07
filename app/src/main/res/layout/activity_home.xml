@@ -5,7 +5,8 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="16dp"
-    android:background="#F7F9FC">
+    android:background="#F7F9FC"
+    android:layoutDirection="rtl">
 
     <TextView
         android:id="@+id/tvName"
@@ -17,6 +18,7 @@
         android:textColor="#333333"
         android:layout_marginBottom="16dp"/>
 
+    <!-- לוח השנה -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -32,7 +34,6 @@
             android:orientation="horizontal"
             android:gravity="center"
             android:layout_marginBottom="8dp">
-
 
             <TextView
                 android:id="@+id/tvMonthYear"
@@ -93,6 +94,34 @@
         android:layout_height="0dp"
         android:layout_weight="1" />
 
+    <!-- שורה חדשה: כפתורי אונליין חכמים -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="8dp">
+
+        <Button
+            android:id="@+id/btnSmartMeeting"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="🤝 פגישה חכמה"
+            android:layout_marginEnd="8dp"
+            android:backgroundTint="#00BCD4"
+            android:textColor="#FFFFFF"/>
+
+        <Button
+            android:id="@+id/btnRequests"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="🔔 בקשות (0)"
+            android:backgroundTint="#FF9800"
+            android:textColor="#FFFFFF"/>
+    </LinearLayout>
+
+    <!-- שורה קיימת: כפתורי ניהול -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -103,7 +132,7 @@
             android:id="@+id/btnSync"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="🔄 סנכרן גוגל"
+            android:text="🔄 סנכרן"
             android:layout_marginEnd="8dp"
             android:backgroundTint="#4285F4"/>
 
@@ -123,4 +152,5 @@
             android:text="יציאה"
             android:backgroundTint="#F44336"/>
     </LinearLayout>
+
 </LinearLayout>

@@ -18,13 +18,27 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar"> <activity android:name=".loginActivity" android:exported="true">
-        <intent-filter>
-            <action android:name="android.intent.action.MAIN" />
-            <category android:name="android.intent.category.LAUNCHER" />
-        </intent-filter>
-    </activity>
+        android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar">
+
+        <!-- מסך התחברות - המסך הראשון שעולה -->
+        <activity android:name=".loginActivity" android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- מסך הבית -->
         <activity android:name=".homeActivity" />
+
+        <!-- מסך הוספת אירוע -->
         <activity android:name=".AddEventActivity" />
+
+        <!-- מסך פגישה חכמה (הוספה חדשה) -->
+        <activity android:name=".SmartMeetingActivity" />
+
+        <!-- מסך בקשות ממתינות (הוספה חדשה) -->
+        <activity android:name=".PendingRequestsActivity" />
+
     </application>
 </manifest>
