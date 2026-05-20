@@ -5,41 +5,54 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="24dp"
-    android:background="#F5F5F5">
+    android:background="@drawable/other_page_background">
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="32dp"
         android:text="יצירת אירוע חדש"
-        android:textColor="#333333"
+        android:textColor="#FFFFFF"
         android:textSize="24sp"
         android:textStyle="bold"
         android:gravity="center" />
 
     <com.google.android.material.textfield.TextInputLayout
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="מה התוכנית?"
+        app:boxBackgroundColor="#000000"
+        app:boxBackgroundMode="outline"
+        app:hintTextColor="#FFFFFF"
+        android:textColorHint="#FFFFFF"
+        app:boxStrokeColor="#FFFFFF"
+        app:boxStrokeWidth="1dp"
         android:layout_marginBottom="16dp">
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etTitle"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:textColor="#FFFFFF" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="מתי זה קורה?"
+        app:boxBackgroundColor="#000000"
+        app:boxBackgroundMode="outline"
+        app:hintTextColor="#FFFFFF"
+        android:textColorHint="#FFFFFF"
+        app:boxStrokeColor="#FFFFFF"
+        app:boxStrokeWidth="1dp"
         app:startIconDrawable="@android:drawable/ic_menu_my_calendar"
+        app:startIconTint="#FFFFFF"
         android:layout_marginBottom="16dp">
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etDate"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textColor="#FFFFFF"
             android:focusable="false"
             android:clickable="true" />
     </com.google.android.material.textfield.TextInputLayout>
@@ -51,46 +64,65 @@
         android:layout_marginBottom="16dp">
 
         <com.google.android.material.textfield.TextInputLayout
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_marginEnd="8dp"
-            android:hint="התחלה">
+            android:hint="התחלה"
+            app:boxBackgroundColor="#000000"
+            app:boxBackgroundMode="outline"
+            app:hintTextColor="#FFFFFF"
+            android:textColorHint="#FFFFFF"
+            app:boxStrokeColor="#FFFFFF"
+            app:boxStrokeWidth="1dp">
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etStartTime"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:textColor="#FFFFFF"
                 android:focusable="false"
                 android:clickable="true" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:hint="סיום">
+            android:hint="סיום"
+            app:boxBackgroundColor="#000000"
+            app:boxBackgroundMode="outline"
+            app:hintTextColor="#FFFFFF"
+            android:textColorHint="#FFFFFF"
+            app:boxStrokeColor="#FFFFFF"
+            app:boxStrokeWidth="1dp">
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etEndTime"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:textColor="#FFFFFF"
                 android:focusable="false"
                 android:clickable="true" />
         </com.google.android.material.textfield.TextInputLayout>
     </LinearLayout>
 
     <com.google.android.material.textfield.TextInputLayout
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="איפה זה?"
+        app:boxBackgroundColor="#000000"
+        app:boxBackgroundMode="outline"
+        app:hintTextColor="#FFFFFF"
+        android:textColorHint="#FFFFFF"
+        app:boxStrokeColor="#FFFFFF"
+        app:boxStrokeWidth="1dp"
         app:startIconDrawable="@android:drawable/ic_dialog_map"
+        app:startIconTint="#FFFFFF"
         android:layout_marginBottom="24dp">
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etLocation"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:textColor="#FFFFFF" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <Button
@@ -99,7 +131,7 @@
         android:layout_height="56dp"
         android:text="שמור אירוע"
         android:textSize="18sp"
-        android:backgroundTint="#4CAF50"
+        android:backgroundTint="#5E3971"
         android:textColor="#FFFFFF" />
 
 </LinearLayout>

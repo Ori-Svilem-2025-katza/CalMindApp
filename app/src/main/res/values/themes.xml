@@ -1,10 +1,25 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
-    <style name="Theme.CalMind" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="colorPrimary">@color/purple_500</item>
-        <item name="colorPrimaryDark">@color/purple_700</item>
-        <item name="colorAccent">@color/teal_200</item>
-        <item name="android:windowBackground">@color/white</item>
+    <style name="WhiteTextInputStyle" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="hintTextColor">#FFFFFF</item>
+        <item name="android:textColorHint">#FFFFFF</item>
+        <item name="boxStrokeColor">#FFFFFF</item>
+        <item name="boxStrokeWidth">1dp</item>
+        <item name="startIconTint">#FFFFFF</item>
+        <item name="endIconTint">#FFFFFF</item>
+    </style>
+
+    <style name="Theme.CalMind" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">#5E3971</item>
+        <item name="colorPrimaryDark">#3F264C</item>
+        <item name="colorAccent">#FFFFFF</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:textColorPrimary">#FFFFFF</item>
+        <item name="android:textColorSecondary">#DDDDDD</item>
+
+        <item name="textInputStyle">@style/WhiteTextInputStyle</item>
     </style>
 
 </resources>

@@ -44,10 +44,13 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
     public void onBindViewHolder(@NonNull CalendarViewHolder holder, int position) {
         String day = daysOfMonth.get(position);
         holder.dayText.setText(day);
+
+        // הגדרת צבע המספרים ללבן
+        holder.dayText.setTextColor(Color.WHITE);
+
         holder.eventContainer.removeAllViews();
 
         if (day != null && !day.isEmpty()) {
-            // תיקון פורמט התאריך להתאמה ל-Google ול-Firebase (למשל: 07-05-2026)
             String dateKey = formatToStandardDate(day, currentMonthYear);
 
             for (EventModel event : allEvents) {

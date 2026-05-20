@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -11,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.PopupMenu;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -41,7 +43,6 @@ public class homeActivity extends AppCompatActivity {
     private TextView tvName, tvMonthYear;
     private Calendar selectedDate;
     private List<EventModel> masterEventsList = new ArrayList<>();
-    private Button btnSmartMeeting, btnRequests; // כפתורים חדשים
 
     private static final int RC_SIGN_IN = 9001;
     private static final String WEB_CLIENT_ID = "1004619012790-v195f7fi1j7ejri8gu2egu6c2sdmtr0f.apps.googleusercontent.com";
@@ -57,16 +58,11 @@ public class homeActivity extends AppCompatActivity {
         calendarRecyclerView = findViewById(R.id.calendarRecyclerView);
         rvEvents = findViewById(R.id.rvEvents);
 
-        // אתחול כפתורים
-        Button btnAdd = findViewById(R.id.btnAdd);
-        Button btnLogout = findViewById(R.id.btnLogout);
-        Button btnSync = findViewById(R.id.btnSync);
+        // אתחול כפתור הלוגו וכפתורי הניווט בלוח
+        ImageButton btnMenu = findViewById(R.id.btnMenu);
         Button btnPrev = findViewById(R.id.btnPrev);
         Button btnNext = findViewById(R.id.btnNext);
-        btnSmartMeeting = findViewById(R.id.btnSmartMeeting);
-        btnRequests = findViewById(R.id.btnRequests);
 
-        // הגדרת רשימות (RecyclerView)
         calendarRecyclerView.setLayoutManager(new GridLayoutManager(this, 7));
         rvEvents.setLayoutManager(new LinearLayoutManager(this));
 
@@ -79,7 +75,6 @@ public class homeActivity extends AppCompatActivity {
 
         loadAllEventsFromFirebase();
 
-        // מאזינים לכפתורים
         btnPrev.setOnClickListener(v -> {
             selectedDate.add(Calendar.MONTH, -1);
             setMonthView();
@@ -90,34 +85,44 @@ public class homeActivity extends AppCompatActivity {
             setMonthView();
         });
 
-        btnAdd.setOnClickListener(v -> startActivity(new Intent(this, AddEventActivity.class)));
+        // לוגיקה לתפריט ה-PopupMenu שייפתח בלחיצה על הלוגו
+        btnMenu.setOnClickListener(v -> {
+            PopupMenu popup = new PopupMenu(homeActivity.this, v);
 
-        btnLogout.setOnClickListener(v -> {
-            auth.signOut();
-            GoogleSignIn.getClient(this, GoogleSignInOptions.DEFAULT_SIGN_IN).signOut().addOnCompleteListener(task -> {
-                startActivity(new Intent(this, loginActivity.class));
-                finish();
+            // כאן התיקון: אנחנו מנפחים את קובץ ה-Menu שיצרת (נמצא ב-res/menu/)
+            popup.getMenuInflater().inflate(R.menu.home_button_menu, popup.getMenu());
+
+            popup.setOnMenuItemClickListener(item -> {
+                int id = item.getItemId();
+                if (id == R.id.action_add_regular) {
+                    startActivity(new Intent(homeActivity.this, AddEventActivity.class));
+                    return true;
+                } else if (id == R.id.action_smart_meeting) {
+                    startActivity(new Intent(homeActivity.this, SmartMeetingActivity.class));
+                    return true;
+                } else if (id == R.id.action_requests) {
+                    startActivity(new Intent(homeActivity.this, PendingRequestsActivity.class));
+                    return true;
+                } else if (id == R.id.action_sync) {
+                    signInAndSync();
+                    return true;
+                } else if (id == R.id.action_logout) {
+                    auth.signOut();
+                    GoogleSignIn.getClient(this, GoogleSignInOptions.DEFAULT_SIGN_IN).signOut().addOnCompleteListener(task -> {
+                        startActivity(new Intent(this, loginActivity.class));
+                        finish();
+                    });
+                    return true;
+                }
+                return false;
             });
-        });
-
-        btnSync.setOnClickListener(v -> signInAndSync());
-
-        // קישור למסכים החדשים
-        btnSmartMeeting.setOnClickListener(v -> {
-            Intent intent = new Intent(homeActivity.this, SmartMeetingActivity.class);
-            startActivity(intent);
-        });
-
-        btnRequests.setOnClickListener(v -> {
-            Intent intent = new Intent(homeActivity.this, PendingRequestsActivity.class);
-            startActivity(intent);
+            popup.show();
         });
     }
 
     private void loadAllEventsFromFirebase() {
         String uid = auth.getUid();
         if (uid == null) return;
-
         FirebaseDatabase.getInstance().getReference("users").child(uid).child("events")
                 .addValueEventListener(new ValueEventListener() {
                     @Override
@@ -142,7 +147,6 @@ public class homeActivity extends AppCompatActivity {
         String month = String.valueOf(selectedDate.get(Calendar.MONTH) + 1);
         String year = String.valueOf(selectedDate.get(Calendar.YEAR));
         String monthYearKey = month + "-" + year;
-
         CalendarAdapter calendarAdapter = new CalendarAdapter(daysInMonth, monthYearKey, masterEventsList, this::filterEventsByDay);
         calendarRecyclerView.setAdapter(calendarAdapter);
     }
@@ -150,9 +154,7 @@ public class homeActivity extends AppCompatActivity {
     private void filterEventsByDay(String dateKey) {
         List<EventModel> filtered = new ArrayList<>();
         for (EventModel e : masterEventsList) {
-            if (e.getDateKey() != null && e.getDateKey().equals(dateKey)) {
-                filtered.add(e);
-            }
+            if (e.getDateKey() != null && e.getDateKey().equals(dateKey)) filtered.add(e);
         }
         updateUI(filtered);
     }
@@ -173,13 +175,9 @@ public class homeActivity extends AppCompatActivity {
         tempCal.set(Calendar.DAY_OF_MONTH, 1);
         int daysInMonth = tempCal.getActualMaximum(Calendar.DAY_OF_MONTH);
         int dayOfWeek = tempCal.get(Calendar.DAY_OF_WEEK) - 1;
-
         for (int i = 1; i <= 42; i++) {
-            if (i <= dayOfWeek || i > daysInMonth + dayOfWeek) {
-                daysInMonthArray.add("");
-            } else {
-                daysInMonthArray.add(String.valueOf(i - dayOfWeek));
-            }
+            if (i <= dayOfWeek || i > daysInMonth + dayOfWeek) daysInMonthArray.add("");
+            else daysInMonthArray.add(String.valueOf(i - dayOfWeek));
         }
         return daysInMonthArray;
     }
@@ -201,12 +199,8 @@ public class homeActivity extends AppCompatActivity {
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             try {
                 GoogleSignInAccount account = task.getResult(ApiException.class);
-                if (account != null) {
-                    syncWithGoogleCalendar(account.getEmail());
-                }
-            } catch (ApiException e) {
-                Log.e("CalMind_Debug", "Google sign in failed", e);
-            }
+                if (account != null) syncWithGoogleCalendar(account.getEmail());
+            } catch (ApiException e) { Log.e("CalMind_Debug", "Google sign in failed", e); }
         }
     }
 
@@ -217,9 +211,7 @@ public class homeActivity extends AppCompatActivity {
                 String uid = auth.getUid();
                 if (uid == null) return;
                 DatabaseReference ref = FirebaseDatabase.getInstance().getReference("users").child(uid).child("events");
-                for (EventModel e : events) {
-                    if (e.getId() != null) ref.child(e.getId()).setValue(e);
-                }
+                for (EventModel e : events) if (e.getId() != null) ref.child(e.getId()).setValue(e);
                 runOnUiThread(() -> Toast.makeText(homeActivity.this, "הסנכרון הושלם!", Toast.LENGTH_SHORT).show());
             }
             @Override

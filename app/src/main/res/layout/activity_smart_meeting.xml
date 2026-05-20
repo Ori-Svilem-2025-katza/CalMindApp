@@ -5,8 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="24dp"
-    android:background="#F5F5F5"
-    android:layoutDirection="rtl">
+    android:background="@drawable/other_page_background">
 
     <TextView
         android:layout_width="match_parent"
@@ -16,33 +15,45 @@
         android:textStyle="bold"
         android:gravity="center"
         android:layout_marginBottom="32dp"
-        android:textColor="#333333"/>
+        android:textColor="#FFFFFF"/>
 
     <com.google.android.material.textfield.TextInputLayout
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="אימייל השותף לפגישה"
+        app:boxBackgroundColor="#000000"
+        app:boxBackgroundMode="outline"
+        app:hintTextColor="#FFFFFF"
+        android:textColorHint="#FFFFFF"
+        app:boxStrokeColor="#FFFFFF"
+        app:boxStrokeWidth="1dp"
         android:layout_marginBottom="16dp">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etPartnerEmail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textColor="#FFFFFF"
             android:inputType="textEmailAddress" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="מיקום הפגישה"
+        app:boxBackgroundColor="#000000"
+        app:boxBackgroundMode="outline"
+        app:hintTextColor="#FFFFFF"
+        android:textColorHint="#FFFFFF"
+        app:boxStrokeColor="#FFFFFF"
+        app:boxStrokeWidth="1dp"
         android:layout_marginBottom="16dp">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etLocation"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textColor="#FFFFFF"
             android:inputType="text" />
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -52,7 +63,7 @@
         android:text="מתי אתם מעדיפים?"
         android:textSize="16sp"
         android:layout_marginBottom="8dp"
-        android:textColor="#666666"/>
+        android:textColor="#FFFFFF"/>
 
     <com.google.android.material.chip.ChipGroup
         android:id="@+id/chipGroupTime"
@@ -63,25 +74,25 @@
 
         <com.google.android.material.chip.Chip
             android:id="@+id/chipMorning"
-            style="@style/Widget.MaterialComponents.Chip.Choice"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="בוקר"
+            android:textColor="#FFFFFF"
             android:checked="true"/>
 
         <com.google.android.material.chip.Chip
             android:id="@+id/chipNoon"
-            style="@style/Widget.MaterialComponents.Chip.Choice"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="צהריים"/>
+            android:text="צהריים"
+            android:textColor="#FFFFFF"/>
 
         <com.google.android.material.chip.Chip
             android:id="@+id/chipEvening"
-            style="@style/Widget.MaterialComponents.Chip.Choice"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="ערב"/>
+            android:text="ערב"
+            android:textColor="#FFFFFF"/>
     </com.google.android.material.chip.ChipGroup>
 
     <Button
@@ -89,15 +100,16 @@
         android:layout_width="match_parent"
         android:layout_height="56dp"
         android:text="שלח בקשה לשותף"
-        android:backgroundTint="#6200EE"
-        android:textColor="#FFFFFF"
+        android:backgroundTint="#FFFFFF"
+        android:textColor="#6200EE"
         android:textSize="18sp" />
     <Button
         android:id="@+id/btnPickDate"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="בחר תאריך לפגישה"
-        android:backgroundTint="#9C27B0"
+        android:backgroundTint="#FFFFFF"
+        android:textColor="#9C27B0"
         android:layout_marginBottom="8dp"/>
 
     <TextView
@@ -107,7 +119,7 @@
         android:text="טרם נבחר תאריך"
         android:gravity="center"
         android:layout_marginBottom="16dp"
-        android:textColor="#333333"/>
+        android:textColor="#FFFFFF"/>
 
     <ProgressBar
         android:id="@+id/progressBar"

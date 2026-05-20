@@ -1,156 +1,102 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp"
-    android:background="#F7F9FC"
+    android:background="@drawable/other_page_background"
     android:layoutDirection="rtl">
+
+    <ImageButton
+        android:id="@+id/btnMenu"
+        android:layout_width="78dp"
+        android:layout_height="89dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="8dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:scaleType="fitCenter"
+        android:src="@drawable/calmind_logo" />
 
     <TextView
         android:id="@+id/tvName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_toEndOf="@id/btnMenu"
+        android:layout_alignTop="@id/btnMenu"
+        android:layout_alignBottom="@id/btnMenu"
+        android:gravity="center_vertical"
+        android:layout_marginStart="16dp"
         android:text="שלום"
-        android:textSize="24sp"
+        android:textSize="20sp"
         android:textStyle="bold"
-        android:textColor="#333333"
-        android:layout_marginBottom="16dp"/>
+        android:textColor="#FFFFFF"/>
 
-    <!-- לוח השנה -->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_below="@id/btnMenu"
+        android:layout_marginTop="16dp"
         android:orientation="vertical"
-        android:background="@drawable/calendar_bg"
-        android:elevation="4dp"
-        android:padding="8dp"
-        android:layout_marginBottom="16dp">
+        android:padding="8dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center"
-            android:layout_marginBottom="8dp">
-
-            <TextView
-                android:id="@+id/tvMonthYear"
-                android:layout_width="0dp"
-                android:layout_weight="1"
+            android:orientation="vertical"
+            android:background="#1E1E1E"
+            android:elevation="4dp"
+            android:padding="8dp"
+            android:layout_marginBottom="16dp">
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:orientation="horizontal"
                 android:gravity="center"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:textColor="#333333"/>
-
-            <Button
-                android:id="@+id/btnPrev"
-                android:layout_width="48dp"
-                android:layout_height="wrap_content"
-                android:text="&lt;"
-                style="?attr/borderlessButtonStyle"/>
-
-            <Button
-                android:id="@+id/btnNext"
-                android:layout_width="48dp"
-                android:layout_height="wrap_content"
-                android:text="&gt;"
-                style="?attr/borderlessButtonStyle"/>
+                android:layout_marginBottom="8dp">
+                <TextView
+                    android:id="@+id/tvMonthYear"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="#FFFFFF"/>
+                <Button
+                    android:id="@+id/btnPrev"
+                    android:layout_width="48dp"
+                    android:layout_height="wrap_content"
+                    android:text="&lt;"
+                    android:textColor="#FFFFFF"
+                    style="?attr/borderlessButtonStyle"/>
+                <Button
+                    android:id="@+id/btnNext"
+                    android:layout_width="48dp"
+                    android:layout_height="wrap_content"
+                    android:text="&gt;"
+                    android:textColor="#FFFFFF"
+                    style="?attr/borderlessButtonStyle"/>
+            </LinearLayout>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/calendarRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <TextView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingBottom="4dp">
-            <TextView android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="א" android:gravity="center" android:textStyle="bold" android:textSize="12sp"/>
-            <TextView android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="ב" android:gravity="center" android:textStyle="bold" android:textSize="12sp"/>
-            <TextView android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="ג" android:gravity="center" android:textStyle="bold" android:textSize="12sp"/>
-            <TextView android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="ד" android:gravity="center" android:textStyle="bold" android:textSize="12sp"/>
-            <TextView android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="ה" android:gravity="center" android:textStyle="bold" android:textSize="12sp"/>
-            <TextView android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="ו" android:gravity="center" android:textStyle="bold" android:textSize="12sp"/>
-            <TextView android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="ש" android:gravity="center" android:textStyle="bold" android:textSize="12sp"/>
-        </LinearLayout>
+            android:text="אירועים:"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            android:layout_marginBottom="8dp"/>
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/calendarRecyclerView"
+            android:id="@+id/rvEvents"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-    </LinearLayout>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="אירועים:"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:layout_marginBottom="8dp"/>
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvEvents"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1" />
-
-    <!-- שורה חדשה: כפתורי אונליין חכמים -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="8dp">
-
-        <Button
-            android:id="@+id/btnSmartMeeting"
-            android:layout_width="0dp"
+            android:layout_height="0dp"
             android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:text="🤝 פגישה חכמה"
-            android:layout_marginEnd="8dp"
-            android:backgroundTint="#00BCD4"
-            android:textColor="#FFFFFF"/>
-
-        <Button
-            android:id="@+id/btnRequests"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:text="🔔 בקשות (0)"
-            android:backgroundTint="#FF9800"
-            android:textColor="#FFFFFF"/>
+            android:background="#1E1E1E"
+            android:padding="8dp"/>
     </LinearLayout>
-
-    <!-- שורה קיימת: כפתורי ניהול -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="8dp">
-
-        <Button
-            android:id="@+id/btnSync"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="🔄 סנכרן"
-            android:layout_marginEnd="8dp"
-            android:backgroundTint="#4285F4"/>
-
-        <Button
-            android:id="@+id/btnAdd"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:text="+ אירוע חדש"
-            android:layout_marginEnd="8dp"
-            android:backgroundTint="#4CAF50"/>
-
-        <Button
-            android:id="@+id/btnLogout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="יציאה"
-            android:backgroundTint="#F44336"/>
-    </LinearLayout>
-
-</LinearLayout>
+</RelativeLayout>

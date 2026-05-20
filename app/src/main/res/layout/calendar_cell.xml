@@ -4,14 +4,14 @@
     android:layout_height="90dp"
     android:orientation="vertical"
     android:padding="2dp"
-    android:background="@android:color/white">
+    android:background="@drawable/other_page_background">
 
     <TextView
         android:id="@+id/cellDayText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="12sp"
-        android:textColor="#333333"
+        android:textColor="#FFFFFF"
         android:layout_gravity="end"
         android:padding="2dp"/>
 
