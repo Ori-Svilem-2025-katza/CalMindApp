@@ -133,5 +133,23 @@
         android:textSize="18sp"
         android:backgroundTint="#5E3971"
         android:textColor="#FFFFFF" />
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="התראה (דקות לפני)"
+        app:boxBackgroundColor="#000000"
+        app:boxBackgroundMode="outline"
+        app:hintTextColor="#000000"
+        android:textColorHint="#FFFFFF"
+        app:boxStrokeColor="#FFFFFF"
+        app:boxStrokeWidth="1dp"
+        android:layout_marginBottom="16dp">
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etReminderTime"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:textColor="#FFFFFF" />
+    </com.google.android.material.textfield.TextInputLayout>
 
 </LinearLayout>

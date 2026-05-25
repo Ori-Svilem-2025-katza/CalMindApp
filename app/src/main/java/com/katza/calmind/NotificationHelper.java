@@ -1,19 +1,28 @@
 package com.katza.calmind;
 
+import android.Manifest;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import androidx.core.app.NotificationCompat;
+import androidx.core.content.ContextCompat;
 
 public class NotificationHelper {
     private static final String CHANNEL_ID = "smart_reminders";
 
     public static void showNotification(Context context, String title, String message) {
-        NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        // אם מדובר באנדרואיד 13+, נוודא שיש הרשאה לפני הצגה
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                return;
+            }
+        }
 
+        NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, "התראות חכמות", NotificationManager.IMPORTANCE_HIGH);
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, "התראות אירועים", NotificationManager.IMPORTANCE_HIGH);
             manager.createNotificationChannel(channel);
         }
 
