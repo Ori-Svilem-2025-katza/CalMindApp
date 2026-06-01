@@ -1,0 +1,221 @@
+@startuml
+class com.katza.calmind.SmartMeetingActivity {
+- TextInputEditText etPartnerEmail
+- ChipGroup chipGroupTime
+- Button btnFindTime
+- TextView tvSelectedDate
+- ProgressBar progressBar
+- String startDate
+- String endDate
+# void onCreate(Bundle)
+- void findPartnerAndSendRequest()
+- void sendMeetingRequest(String)
+}
+
+
+class com.katza.calmind.EventAdapter {
+- List<EventModel> events
+- OnEventClickListener listener
++ void updateList(List<EventModel>)
++ ViewHolder onCreateViewHolder(ViewGroup,int)
++ void onBindViewHolder(ViewHolder,int)
+- int getEventStatusColor(EventModel)
++ int getItemCount()
+}
+
+
+interface com.katza.calmind.EventAdapter$OnEventClickListener {
+~ void onEventClick(EventModel)
+}
+
+class com.katza.calmind.EventAdapter$ViewHolder {
+~ TextView tvTitle
+}
+
+class com.katza.calmind.AddEventActivity {
+- TextInputEditText etTitle
+- Button btnSave
+- String selectedDateKey
+# void onCreate(Bundle)
+- void openLocationInMaps(String)
+- void showDatePicker()
+- void showTimePicker(boolean)
+- void saveEvent()
+- void scheduleAlarm(String,int)
+}
+
+
+class com.katza.calmind.CalendarHelper {
++ {static} void addEvent(Context,String,Date)
+}
+
+class com.katza.calmind.MeetingRequest {
++ String requestId
++ String senderUid
++ String senderEmail
++ String receiverUid
++ String status
++ String preferredTime
++ String location
++ String startDate
++ String endDate
++ String getStartDate()
++ void setStartDate(String)
++ String getEndDate()
++ void setEndDate(String)
+}
+
+
+class com.katza.calmind.loginActivity {
+- FirebaseAuth auth
+- EditText etEmail
+- Button btnLogin
+# void onCreate(Bundle)
+- void loginUser()
+- void updateUsersLookup()
+- void goToHome()
+}
+
+
+class com.katza.calmind.CalendarAdapter {
+- ArrayList<String> daysOfMonth
+- String currentMonthYear
+- List<EventModel> allEvents
+- OnItemListener onItemListener
++ CalendarViewHolder onCreateViewHolder(ViewGroup,int)
++ void onBindViewHolder(CalendarViewHolder,int)
+- String formatToStandardDate(String,String)
+- void addMiniEvent(CalendarViewHolder,EventModel)
+- int getEventStatusColor(EventModel)
++ int getItemCount()
+}
+
+
+interface com.katza.calmind.CalendarAdapter$OnItemListener {
+~ void onItemClick(String)
+}
+
+class com.katza.calmind.CalendarAdapter$CalendarViewHolder {
++ TextView dayText
++ LinearLayout eventContainer
+}
+
+class com.katza.calmind.GoogleCalendarHelper {
++ {static} void fetchEvents(Context,String,CalendarCallback)
+}
+
+interface com.katza.calmind.GoogleCalendarHelper$CalendarCallback {
+~ void onSuccess(List<EventModel>)
+~ void onError(Exception)
+}
+
+class com.katza.calmind.homeActivity {
+- FirebaseAuth auth
+- RecyclerView rvEvents
+- TextView tvName
+- Calendar selectedDate
+- List<EventModel> masterEventsList
+- List<EventModel> currentDayEventsList
+- String lastSelectedDateKey
+- EditText etSearch
+- Button btnFilterAll
+- boolean filterOnlyWithLocation
+- String currentSearchQuery
+- {static} int RC_SIGN_IN
+- {static} String WEB_CLIENT_ID
+# void onCreate(Bundle)
+- void setupFilterListeners()
+- void loadAllEventsFromFirebase()
+- void setMonthView()
+- void filterEventsByDay(String)
+- void applyCurrentFilter()
+- void updateUI(List<EventModel>)
+- String monthYearFromDate(Calendar)
+- ArrayList<String> daysInMonthArray(Calendar)
+- void signInAndSync()
+# void onActivityResult(int,int,Intent)
+- void syncWithGoogleCalendar(String)
+- void showEventDetails(EventModel)
+}
+
+
+class com.katza.calmind.signupActivity {
+- FirebaseAuth auth
+- EditText etEmail
+- Button btnSignUp
+- TextView tvBackToLogin
+# void onCreate(Bundle)
+- void registerUser()
+}
+
+
+class com.katza.calmind.EventModel {
++ String id
++ String dateKey
++ String title
++ String time
++ String endTime
++ String locationName
++ String getId()
++ void setId(String)
++ String getDateKey()
++ void setDateKey(String)
++ String getTitle()
++ void setTitle(String)
++ String getTime()
++ void setTime(String)
++ String getEndTime()
++ void setEndTime(String)
++ String getLocationName()
++ void setLocationName(String)
+}
+
+
+class com.katza.calmind.NotificationHelper {
+- {static} String CHANNEL_ID
++ {static} void showNotification(Context,String,String)
+}
+
+
+class com.katza.calmind.PendingRequestsActivity {
+- ListView lvRequests
+- List<MeetingRequest> requestList
+- List<String> displayList
+- ArrayAdapter<String> adapter
+- SimpleDateFormat sdf
+# void onCreate(Bundle)
+- void loadRequests()
+- void showConfirmDialog(MeetingRequest)
+- void startSmartScheduling(MeetingRequest)
+- void checkNextDay(MeetingRequest,List<String>,int)
+- String findCommonSlot(DataSnapshot,DataSnapshot,String)
+- void finalizeMeeting(MeetingRequest,String,String)
+- void addEventToUser(String,MeetingRequest,String,String,String)
+- void updateStatus(String,String)
+- List<String> getDatesBetween(String,String)
+}
+
+
+class com.katza.calmind.ReminderReceiver {
++ void onReceive(Context,Intent)
+}
+
+
+
+androidx.appcompat.app.AppCompatActivity <|-- com.katza.calmind.SmartMeetingActivity
+com.katza.calmind.Adapter <|-- com.katza.calmind.EventAdapter
+com.katza.calmind.EventAdapter +.. com.katza.calmind.EventAdapter$OnEventClickListener
+com.katza.calmind.EventAdapter +.. com.katza.calmind.EventAdapter$ViewHolder
+com.katza.calmind.ViewHolder <|-- com.katza.calmind.EventAdapter$ViewHolder
+androidx.appcompat.app.AppCompatActivity <|-- com.katza.calmind.AddEventActivity
+androidx.appcompat.app.AppCompatActivity <|-- com.katza.calmind.loginActivity
+com.katza.calmind.Adapter <|-- com.katza.calmind.CalendarAdapter
+com.katza.calmind.CalendarAdapter +.. com.katza.calmind.CalendarAdapter$OnItemListener
+com.katza.calmind.CalendarAdapter +.. com.katza.calmind.CalendarAdapter$CalendarViewHolder
+com.katza.calmind.ViewHolder <|-- com.katza.calmind.CalendarAdapter$CalendarViewHolder
+com.katza.calmind.GoogleCalendarHelper +.. com.katza.calmind.GoogleCalendarHelper$CalendarCallback
+androidx.appcompat.app.AppCompatActivity <|-- com.katza.calmind.homeActivity
+androidx.appcompat.app.AppCompatActivity <|-- com.katza.calmind.signupActivity
+androidx.appcompat.app.AppCompatActivity <|-- com.katza.calmind.PendingRequestsActivity
+android.content.BroadcastReceiver <|-- com.katza.calmind.ReminderReceiver
+@enduml
