@@ -5,15 +5,14 @@ import com.google.firebase.database.PropertyName;
 
 @IgnoreExtraProperties
 public class EventModel {
-    public String id; // מזהה ייחודי למניעת כפילויות
+    public String id;
     public String dateKey;
     public String title;
-    public String time;      // שעת התחלה
-    public String endTime;   // שעת סיום
+    public String time;
+    public String endTime;
     public String locationName;
 
     public EventModel() {
-        // נדרש עבור Firebase
     }
 
     public EventModel(String title, String time, String endTime, String dateKey, String locationName, String id) {

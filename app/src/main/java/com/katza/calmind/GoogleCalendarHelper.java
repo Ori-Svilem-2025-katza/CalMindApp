@@ -44,11 +44,10 @@ public class GoogleCalendarHelper {
                 List<EventModel> resultList = new ArrayList<>();
 
                 for (Event event : items) {
-                    String googleId = event.getId(); // חילוץ ה-ID למניעת כפילויות
+                    String googleId = event.getId();
                     String title = event.getSummary() != null ? event.getSummary() : "אירוע ללא כותרת";
                     String loc = event.getLocation() != null ? event.getLocation() : "לא צוין";
 
-                    // זמן התחלה
                     DateTime start = event.getStart().getDateTime();
                     if (start == null) start = event.getStart().getDate();
 
@@ -59,13 +58,11 @@ public class GoogleCalendarHelper {
                             calStart.get(java.util.Calendar.HOUR_OF_DAY),
                             calStart.get(java.util.Calendar.MINUTE));
 
-                    // פורמט תאריך אחיד למערכת dd-MM-yyyy
                     String dateKey = String.format(Locale.getDefault(), "%02d-%02d-%04d",
                             calStart.get(java.util.Calendar.DAY_OF_MONTH),
                             (calStart.get(java.util.Calendar.MONTH) + 1),
                             calStart.get(java.util.Calendar.YEAR));
 
-                    // זמן סיום
                     DateTime end = event.getEnd().getDateTime();
                     if (end == null) end = event.getEnd().getDate();
 

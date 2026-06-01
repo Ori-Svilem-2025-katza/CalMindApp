@@ -34,7 +34,9 @@
         <activity android:name=".AddEventActivity" />
         <activity android:name=".SmartMeetingActivity" />
         <activity android:name=".PendingRequestsActivity" />
+        <activity android:name=".signupActivity">
 
+        </activity>
         <receiver android:name=".ReminderReceiver" android:exported="false" />
 
     </application>

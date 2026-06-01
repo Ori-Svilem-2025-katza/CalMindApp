@@ -18,7 +18,7 @@ import java.util.Locale;
 
 public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.CalendarViewHolder> {
     private final ArrayList<String> daysOfMonth;
-    private final String currentMonthYear; // פורמט צפוי: "M-yyyy"
+    private final String currentMonthYear;
     private final List<EventModel> allEvents;
     private final OnItemListener onItemListener;
 
@@ -45,7 +45,6 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
         String day = daysOfMonth.get(position);
         holder.dayText.setText(day);
 
-        // הגדרת צבע המספרים ללבן
         holder.dayText.setTextColor(Color.WHITE);
 
         holder.eventContainer.removeAllViews();
@@ -70,7 +69,7 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
             int yearInt = Integer.parseInt(parts[1]);
             return String.format(Locale.getDefault(), "%02d-%02d-%04d", dayInt, monthInt, yearInt);
         } catch (Exception e) {
-            return day + "-" + monthYear; // Fallback
+            return day + "-" + monthYear;
         }
     }
 

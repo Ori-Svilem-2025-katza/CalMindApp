@@ -1,9 +1,15 @@
 package com.katza.calmind;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -42,7 +48,15 @@ public class homeActivity extends AppCompatActivity {
     private RecyclerView rvEvents, calendarRecyclerView;
     private TextView tvName, tvMonthYear;
     private Calendar selectedDate;
-    private List<EventModel> masterEventsList = new ArrayList<>();
+
+    private final List<EventModel> masterEventsList = new ArrayList<>();
+    private final List<EventModel> currentDayEventsList = new ArrayList<>();
+    private String lastSelectedDateKey = "";
+
+    private EditText etSearch;
+    private Button btnFilterAll, btnFilterWithLocation;
+    private boolean filterOnlyWithLocation = false;
+    private String currentSearchQuery = "";
 
     private static final int RC_SIGN_IN = 9001;
     private static final String WEB_CLIENT_ID = "1004619012790-v195f7fi1j7ejri8gu2egu6c2sdmtr0f.apps.googleusercontent.com";
@@ -52,13 +66,23 @@ public class homeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS}, 101);
+            }
+        }
+
         auth = FirebaseAuth.getInstance();
         tvName = findViewById(R.id.tvName);
         tvMonthYear = findViewById(R.id.tvMonthYear);
+
         calendarRecyclerView = findViewById(R.id.calendarRecyclerView);
         rvEvents = findViewById(R.id.rvEvents);
 
-        // אתחול כפתור הלוגו וכפתורי הניווט בלוח
+        etSearch = findViewById(R.id.etSearch);
+        btnFilterAll = findViewById(R.id.btnFilterAll);
+        btnFilterWithLocation = findViewById(R.id.btnFilterWithLocation);
+
         ImageButton btnMenu = findViewById(R.id.btnMenu);
         Button btnPrev = findViewById(R.id.btnPrev);
         Button btnNext = findViewById(R.id.btnNext);
@@ -73,6 +97,7 @@ public class homeActivity extends AppCompatActivity {
             tvName.setText("שלום, " + (email != null ? email.split("@")[0] : "אורח"));
         }
 
+        setupFilterListeners();
         loadAllEventsFromFirebase();
 
         btnPrev.setOnClickListener(v -> {
@@ -85,13 +110,11 @@ public class homeActivity extends AppCompatActivity {
             setMonthView();
         });
 
-        // לוגיקה לתפריט ה-PopupMenu שייפתח בלחיצה על הלוגו
         btnMenu.setOnClickListener(v -> {
-            PopupMenu popup = new PopupMenu(homeActivity.this, v);
+            PopupMenu popup = new PopupMenu(v.getContext(), v, android.view.Gravity.NO_GRAVITY,
+                    androidx.appcompat.R.attr.popupMenuStyle, 0);
 
-            // כאן התיקון: אנחנו מנפחים את קובץ ה-Menu שיצרת (נמצא ב-res/menu/)
             popup.getMenuInflater().inflate(R.menu.home_button_menu, popup.getMenu());
-
             popup.setOnMenuItemClickListener(item -> {
                 int id = item.getItemId();
                 if (id == R.id.action_add_regular) {
@@ -120,6 +143,38 @@ public class homeActivity extends AppCompatActivity {
         });
     }
 
+    private void setupFilterListeners() {
+        if (etSearch != null) {
+            etSearch.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    currentSearchQuery = s.toString().trim().toLowerCase();
+                    applyCurrentFilter();
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {}
+            });
+        }
+
+        if (btnFilterAll != null) {
+            btnFilterAll.setOnClickListener(v -> {
+                filterOnlyWithLocation = false;
+                applyCurrentFilter();
+            });
+        }
+
+        if (btnFilterWithLocation != null) {
+            btnFilterWithLocation.setOnClickListener(v -> {
+                filterOnlyWithLocation = true;
+                applyCurrentFilter();
+            });
+        }
+    }
+
     private void loadAllEventsFromFirebase() {
         String uid = auth.getUid();
         if (uid == null) return;
@@ -133,6 +188,10 @@ public class homeActivity extends AppCompatActivity {
                             if (model != null) masterEventsList.add(model);
                         }
                         setMonthView();
+
+                        if (!lastSelectedDateKey.isEmpty()) {
+                            filterEventsByDay(lastSelectedDateKey);
+                        }
                     }
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
@@ -152,15 +211,41 @@ public class homeActivity extends AppCompatActivity {
     }
 
     private void filterEventsByDay(String dateKey) {
-        List<EventModel> filtered = new ArrayList<>();
+        lastSelectedDateKey = dateKey;
+        currentDayEventsList.clear();
+
         for (EventModel e : masterEventsList) {
-            if (e.getDateKey() != null && e.getDateKey().equals(dateKey)) filtered.add(e);
+            if (e.getDateKey() != null && e.getDateKey().equals(dateKey)) {
+                currentDayEventsList.add(e);
+            }
         }
-        updateUI(filtered);
+        applyCurrentFilter();
+    }
+
+    private void applyCurrentFilter() {
+        List<EventModel> finalFilteredList = new ArrayList<>();
+
+        for (EventModel event : currentDayEventsList) {
+            boolean matchesSearch = event.getTitle().toLowerCase().contains(currentSearchQuery) ||
+                    (event.getLocationName() != null && event.getLocationName().toLowerCase().contains(currentSearchQuery));
+
+            boolean matchesLocationFilter = !filterOnlyWithLocation ||
+                    (event.getLocationName() != null && !event.getLocationName().trim().isEmpty());
+
+            if (matchesSearch && matchesLocationFilter) {
+                finalFilteredList.add(event);
+            }
+        }
+        updateUI(finalFilteredList);
     }
 
     private void updateUI(List<EventModel> events) {
-        EventAdapter adapter = new EventAdapter(events, this::showEventDetails);
+        EventAdapter adapter = new EventAdapter(events, new EventAdapter.OnEventClickListener() {
+            @Override
+            public void onEventClick(EventModel event) {
+                showEventDetails(event);
+            }
+        });
         rvEvents.setAdapter(adapter);
     }
 

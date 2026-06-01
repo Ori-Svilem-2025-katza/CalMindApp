@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Locale;
 
 public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> {
-    private final List<EventModel> events;
+    private List<EventModel> events;
     private final OnEventClickListener listener;
 
     public interface OnEventClickListener {
@@ -24,6 +24,11 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> 
     public EventAdapter(List<EventModel> events, OnEventClickListener listener) {
         this.events = events;
         this.listener = listener;
+    }
+
+    public void updateList(List<EventModel> newList) {
+        this.events = newList;
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -61,22 +66,21 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> 
                 end = sdf.parse(event.getDateKey() + " " + event.getEndTime());
             }
 
-            // השוואה לפי מילי-שניות (יותר מדויק)
             long nowMs = now.getTime();
             long startMs = start.getTime();
 
             if (end != null) {
                 long endMs = end.getTime();
                 if (nowMs >= startMs && nowMs <= endMs) {
-                    return Color.parseColor("#6200EE"); // סגול (עכשיו)
+                    return Color.parseColor("#6200EE");
                 }
             }
 
             if (nowMs < startMs) {
-                return Color.parseColor("#4CAF50"); // ירוק (עתיד)
+                return Color.parseColor("#4CAF50");
             }
 
-            return Color.parseColor("#9E9E9E"); // אפור (עבר)
+            return Color.parseColor("#9E9E9E");
         } catch (Exception e) {
             return Color.parseColor("#9E9E9E");
         }

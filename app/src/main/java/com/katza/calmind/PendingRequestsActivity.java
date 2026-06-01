@@ -16,7 +16,6 @@ public class PendingRequestsActivity extends AppCompatActivity {
     private List<MeetingRequest> requestList = new ArrayList<>();
     private List<String> displayList = new ArrayList<>();
     private ArrayAdapter<String> adapter;
-    // פורמט התאריך כפי שמופיע בצילום המסך שלך (למשל 6-5-2026)
     private SimpleDateFormat sdf = new SimpleDateFormat("d-M-yyyy", Locale.getDefault());
 
     @Override
@@ -121,7 +120,6 @@ public class PendingRequestsActivity extends AppCompatActivity {
     }
 
     private void finalizeMeeting(MeetingRequest req, String date, String time) {
-        // חישוב שעת סיום (שעה אחת אחרי)
         String endTime = (Integer.parseInt(time.split(":")[0]) + 1) + ":00";
         if (endTime.length() == 4) endTime = "0" + endTime;
 
@@ -140,18 +138,15 @@ public class PendingRequestsActivity extends AppCompatActivity {
         DatabaseReference eventRef = FirebaseDatabase.getInstance().getReference("users").child(uid).child("events");
         String eventId = eventRef.push().getKey();
 
-        // 1. נחשב את התאריך לתוך משתנה זמני
         String tempDate;
         try {
             Date parsedDate = sdf.parse(date);
-            // שים לב: אם ביומן שלך לא רואים כלום, נסה להחליף ל "d-M-yyyy"
             SimpleDateFormat calendarFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
             tempDate = calendarFormat.format(parsedDate);
         } catch (Exception e) {
             tempDate = date;
         }
 
-        // 2. נעביר אותו למשתנה final עבור ה-Lambda
         final String finalDateForFirebase = tempDate;
 
         HashMap<String, Object> eventData = new HashMap<>();

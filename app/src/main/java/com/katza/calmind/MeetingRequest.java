@@ -8,11 +8,11 @@ public class MeetingRequest {
     public String senderUid;
     public String senderEmail;
     public String receiverUid;
-    public String status; // "pending", "approved", "declined"
-    public String preferredTime; // "בוקר", "צהריים", "ערב"
+    public String status;
+    public String preferredTime;
     public String location;
-    public String startDate; // תאריך התחלה (למשל 07-05-2026)
-    public String endDate;   // תאריך סיום (למשל 16-05-2026)
+    public String startDate;
+    public String endDate;
 
     public MeetingRequest() {}
 
@@ -28,7 +28,6 @@ public class MeetingRequest {
         this.status = "pending";
     }
 
-    // Getters ו-Setters
     public String getStartDate() { return startDate; }
     public void setStartDate(String startDate) { this.startDate = startDate; }
     public String getEndDate() { return endDate; }

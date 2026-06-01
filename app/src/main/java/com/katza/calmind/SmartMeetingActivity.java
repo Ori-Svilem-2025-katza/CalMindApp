@@ -27,7 +27,6 @@ public class SmartMeetingActivity extends AppCompatActivity {
     private TextView tvSelectedDate;
     private ProgressBar progressBar;
 
-    // משתנים לשמירת הטווח
     private String startDate = "";
     private String endDate = "";
 
@@ -44,7 +43,6 @@ public class SmartMeetingActivity extends AppCompatActivity {
         tvSelectedDate = findViewById(R.id.tvSelectedDate);
         progressBar = findViewById(R.id.progressBar);
 
-        // בחירת טווח תאריכים מודרנית
         btnPickDate.setOnClickListener(v -> {
             MaterialDatePicker<Pair<Long, Long>> dateRangePicker =
                     MaterialDatePicker.Builder.dateRangePicker()
@@ -101,7 +99,6 @@ public class SmartMeetingActivity extends AppCompatActivity {
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("meeting_requests");
         String requestId = ref.push().getKey();
 
-        // יצירת בקשה עם תאריך התחלה וסיום
         MeetingRequest req = new MeetingRequest(requestId, myUid, myEmail, partnerUid, pref,
                 etLocation.getText().toString(), startDate, endDate);
 

@@ -1,18 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
+
     <item
         android:id="@+id/action_add_regular"
-        android:title="➕ אירוע רגיל חדש" />
+        android:title="הוספת אירוע רגיל" />
+
     <item
         android:id="@+id/action_smart_meeting"
-        android:title="🤝 פגישה חכמה" />
+        android:title="פגישה חכמה" />
+
     <item
         android:id="@+id/action_requests"
-        android:title="🔔 בקשות וממתינים" />
+        android:title="בקשות ממתינות" />
+
     <item
         android:id="@+id/action_sync"
-        android:title="🔄 סנכרן יומן" />
+        android:title="סנכרון עם גוגל" />
+
     <item
         android:id="@+id/action_logout"
-        android:title="❌ יציאה מהחשבון" />
+        android:title="התנתק" />
+
 </menu>

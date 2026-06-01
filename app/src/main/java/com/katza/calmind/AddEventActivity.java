@@ -3,6 +3,7 @@ package com.katza.calmind;
 import android.app.*;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
@@ -35,6 +36,27 @@ public class AddEventActivity extends AppCompatActivity {
         etStartTime.setOnClickListener(v -> showTimePicker(true));
         etEndTime.setOnClickListener(v -> showTimePicker(false));
         btnSave.setOnClickListener(v -> saveEvent());
+
+        etLocation.setOnLongClickListener(v -> {
+            String location = etLocation.getText().toString().trim();
+            if (!location.isEmpty()) {
+                openLocationInMaps(location);
+            } else {
+                Toast.makeText(this, "נא להזין מיקום קודם", Toast.LENGTH_SHORT).show();
+            }
+            return true;
+        });
+    }
+
+    private void openLocationInMaps(String locationName) {
+        try {
+            String uriString = "geo:0,0?q=" + Uri.encode(locationName);
+            Intent mapIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(uriString));
+            mapIntent.setPackage("com.google.android.apps.maps");
+            startActivity(mapIntent);
+        } catch (Exception e) {
+            Toast.makeText(this, "לא ניתן לפתוח את Google Maps", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void showDatePicker() {
@@ -68,7 +90,6 @@ public class AddEventActivity extends AppCompatActivity {
             return;
         }
 
-        // חישוב והגדרת התראה
         int reminderMinutes = reminderStr.isEmpty() ? 0 : Integer.parseInt(reminderStr);
         scheduleAlarm(title, reminderMinutes);
 
@@ -86,12 +107,11 @@ public class AddEventActivity extends AppCompatActivity {
 
     private void scheduleAlarm(String title, int minutesBefore) {
         try {
-            // פירוק התאריך (dd-MM-yyyy) והשעה (HH:mm)
             String[] dateParts = selectedDateKey.split("-");
             String[] timeParts = selectedStartTime.split(":");
 
             int day = Integer.parseInt(dateParts[0]);
-            int month = Integer.parseInt(dateParts[1]) - 1; // Calendar חודשים מתחילים ב-0
+            int month = Integer.parseInt(dateParts[1]) - 1;
             int year = Integer.parseInt(dateParts[2]);
             int hour = Integer.parseInt(timeParts[0]);
             int minute = Integer.parseInt(timeParts[1]);
@@ -99,17 +119,14 @@ public class AddEventActivity extends AppCompatActivity {
             Calendar calendar = Calendar.getInstance();
             calendar.set(year, month, day, hour, minute, 0);
 
-            // חיסור הזמן שהמשתמש בחר
             calendar.add(Calendar.MINUTE, -minutesBefore);
 
-            // בדיקה שהזמן לא עבר
             if (calendar.getTimeInMillis() <= System.currentTimeMillis()) return;
 
             AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
             Intent intent = new Intent(this, ReminderReceiver.class);
             intent.putExtra("event_title", title);
 
-            // יצירת ID ייחודי מבוסס זמן נוכחי כדי שה-PendingIntent לא יתנגש עם אחרים
             int uniqueId = (int) System.currentTimeMillis();
 
             PendingIntent pendingIntent = PendingIntent.getBroadcast(
@@ -120,7 +137,6 @@ public class AddEventActivity extends AppCompatActivity {
             );
 
             if (alarmManager != null) {
-                // כאן הקריאה שבאמת מפעילה את ההתראה ב-AlarmManager
                 alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
             }
         } catch (Exception e) {

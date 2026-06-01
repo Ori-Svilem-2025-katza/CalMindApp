@@ -83,7 +83,6 @@ public class loginActivity extends AppCompatActivity {
         if (user != null && user.getEmail() != null) {
             String uid = user.getUid();
             String safeEmail = user.getEmail().replace(".", ",");
-            // שמירת המיפוי בין אימייל ל-UID ב-Database
             FirebaseDatabase.getInstance().getReference("users_lookup")
                     .child(safeEmail).setValue(uid);
         }

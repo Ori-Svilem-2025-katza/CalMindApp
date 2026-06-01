@@ -9,8 +9,7 @@ public class ReminderReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         String title = intent.getStringExtra("event_title");
-        Log.d("ReminderReceiver", "Alarm received for: " + title); // בדוק ב-Logcat אם זה מופיע!
-
+        Log.d("ReminderReceiver", "Alarm received for: " + title);
 
         NotificationHelper.showNotification(context, "תזכורת לאירוע", title != null ? title : "יש לך אירוע עכשיו");
     }

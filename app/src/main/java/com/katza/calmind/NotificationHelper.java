@@ -13,7 +13,6 @@ public class NotificationHelper {
     private static final String CHANNEL_ID = "smart_reminders";
 
     public static void showNotification(Context context, String title, String message) {
-        // אם מדובר באנדרואיד 13+, נוודא שיש הרשאה לפני הצגה
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
                 return;

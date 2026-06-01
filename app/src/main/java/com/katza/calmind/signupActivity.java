@@ -23,10 +23,8 @@ public class signupActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
 
-        // אתחול Firebase
         auth = FirebaseAuth.getInstance();
 
-        // קישור רכיבי UI
         etEmail = findViewById(R.id.etEmailSignUp);
         etPassword = findViewById(R.id.etPasswordSignUp);
         btnSignUp = findViewById(R.id.btnSignUp);
